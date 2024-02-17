@@ -1,28 +1,28 @@
 use candid::{CandidType, Deserialize};
 use std::include_bytes;
 
-mode core;
+mod core;
 
 const IMAGE_SIZE_IN_PIXELS: usize = 1024;
-const LOGO_TRANSPARENT: &[U8] = include_bytes!("../assets/logo-transparent.png");
-const LOGO_WHITE: &[U8] = include_bytes!("../assets/logo-white.png");
+const LOGO_TRANSPARENT: &[u8] = include_bytes!("../assets/logo_transparent.png");
+const LOGO_WHITE: &[u8] = include_bytes!("../assets/logo_white.png");
 
 #[derive(CandidType, Deserialize)]
 struct Options {
-  add_logo: bool,
-  add_gradient: bool,
-  add_transparency: Option<bool>,
+    add_logo: bool,
+    add_gradient: bool,
+    add_transparency: Option<bool>,
 }
 
 #[derive(CandidType, Deserialize)]
 struct QrError {
-  message: String,
+    message: String,
 }
 
 #[derive(CandidType, Deserialize)]
 enum QrResult {
-  Image(Vec<u8>),
-  Error(QrError),
+    Image(Vec<u8>),
+    Err(QrError),
 }
 
 fn qrcode_impl(input: String, options: Options) -> QrResult {
@@ -31,12 +31,15 @@ fn qrcode_impl(input: String, options: Options) -> QrResult {
     } else {
         LOGO_WHITE
     };
-    let result = match core::generate(input,options,logo, IMAGE_SIZE_IN_PIXELS) {
+    let result = match core::generate(input, options, logo, IMAGE_SIZE_IN_PIXELS) {
         Ok(blob) => QrResult::Image(blob),
-        Err(err) => QrResult::Error(QrError { message: err.to_string(), })
+        Err(err) => QrResult::Err(QrError {
+            message: err.to_string(),
+        }),
     };
     ic_cdk::println!(
-        "Executed instructions: {}", ic_cdk::api::performance_counter(0)
+        "Executed instructions: {}",
+        ic_cdk::api::performance_counter(0)
     );
     result
 }
