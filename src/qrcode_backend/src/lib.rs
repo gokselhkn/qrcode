@@ -4,8 +4,8 @@ use std::include_bytes;
 mod core;
 
 const IMAGE_SIZE_IN_PIXELS: usize = 1024;
-const LOGO_TRANSPARENT: &[u8] = include_bytes!("../assets/logo_transparent.png");
-const LOGO_WHITE: &[u8] = include_bytes!("../assets/logo_white.png");
+const LOGO_TRANSPARENT: &[u8] = include_bytes!("./assets/logo_transparent.png");
+const LOGO_WHITE: &[u8] = include_bytes!("./assets/logo_white.png");
 
 #[derive(CandidType, Deserialize)]
 struct Options {
